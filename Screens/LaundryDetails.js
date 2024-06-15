@@ -1,24 +1,41 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, FlatList, StyleSheet } from 'react-native';
 import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore';
-import { app } from "../firebase"
+import { app } from "../firebase";
 
 const LaundryDetails = () => {
-    const [laundryCode, setLaundryCode] = useState('');
-    const [laundryData, setLaundryData] = useState([]);
-  
-    const fetchLaundryDetails = async () => {
-      const firestore = getFirestore(app);
-      const q = query(collection(firestore, 'laundryDetails'), where('laundryCode', '==', laundryCode));
-      const querySnapshot = await getDocs(q);
-      const data = [];
-      querySnapshot.forEach(doc => {
-        data.push(doc.data());
-      });
-      setLaundryData(data);
-    };
+  const [laundryCode, setLaundryCode] = useState('');
+  const [laundryData, setLaundryData] = useState([]);
 
-    const renderItem = ({ item }) => (
+  const fetchLaundryDetails = async () => {
+    const firestore = getFirestore(app);
+    const q = query(collection(firestore, 'laundryDetails'), where('laundryCode', '==', laundryCode));
+    const querySnapshot = await getDocs(q);
+    const data = [];
+    querySnapshot.forEach(doc => {
+      data.push(doc.data());
+    });
+    setLaundryData(data);
+  };
+
+  const renderItem = ({ item }) => {
+    let statusColor = 'black'; // default color
+    let statusFontSize = 16; // default font size
+    let statusText = item.status; // default status text
+
+    switch (item.status) {
+      case 'Ready for Pickup':
+        statusColor = 'orange';
+        break;
+      case 'Delivered':
+        statusColor = 'green';
+        break;
+      default:
+        statusColor = 'black';
+        break;
+    }
+
+    return (
       <View style={styles.itemContainer}>
         <View style={styles.row}>
           <Text style={styles.label}>Laundry Code:</Text>
@@ -49,29 +66,30 @@ const LaundryDetails = () => {
           <Text>{item.email}</Text>
         </View>
         <View style={styles.row}>
-          <Text style={styles.label}>Status:</Text>
-          <Text>{item.status}</Text>
+          <Text style={[styles.label, { fontWeight: 'bold', textAlign: 'center' }]}>Status:</Text>
+          <Text style={{ color: statusColor, fontSize: statusFontSize, textAlign: 'center' }}>{statusText}</Text>
         </View>
       </View>
     );
-  
-    return (
-      <View style={styles.container}>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter Laundry Code"
-          value={laundryCode}
-          onChangeText={text => setLaundryCode(text)}
-        />
-        <Button title="Fetch Details" onPress={fetchLaundryDetails} />
-        <FlatList
-          data={laundryData}
-          renderItem={renderItem}
-          keyExtractor={(item, index) => index.toString()}
-        />
-      </View>
-    );
-}
+  };
+
+  return (
+    <View style={styles.container}>
+      <TextInput
+        style={styles.input}
+        placeholder="Enter Laundry Code"
+        value={laundryCode}
+        onChangeText={text => setLaundryCode(text)}
+      />
+      <Button title="Fetch Details" onPress={fetchLaundryDetails} />
+      <FlatList
+        data={laundryData}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => index.toString()}
+      />
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -99,7 +117,6 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   label: {
-    fontWeight: 'bold',
     marginRight: 10,
   },
 });

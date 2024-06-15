@@ -59,16 +59,13 @@ const UpdateStatus = () => {
       const laundryDocRef = doc(firestore, 'laundryDetails', id);
 
       let newStatus = '';
-      let buttonText = '';
 
-      if (currentStatus === 'Ready for Pickup') {
+      if (currentStatus === 'Laundry Picked') {
+        newStatus = 'Ready for Pickup';
+      } else if (currentStatus === 'Ready for Pickup') {
         newStatus = 'Delivered';
-        buttonText = 'Delivered';
       } else if (currentStatus === 'Delivered') {
         return; // Do nothing if already delivered
-      } else {
-        newStatus = 'Ready for Pickup';
-        buttonText = 'Mark as Ready';
       }
 
       await updateDoc(laundryDocRef, {
@@ -118,27 +115,38 @@ const UpdateStatus = () => {
         <View style={styles.dataHeading}>
           <Text style={styles.dataTextHeading}>Date</Text>
           <Text style={styles.dataTextHeading}>Name</Text>
-          <Text style={styles.dataTextHeading}>Laundry ID</Text>
+          <Text style={styles.dataTextHeading}>Laundry Code</Text>
           <Text style={styles.dataTextHeading}>No of Clothes</Text>
-          <Text style={styles.dataTextHeading}>Status</Text>
-          <Text style={styles.dataTextHeading}>Update Status</Text>
         </View>
         {laundryData.map((item, index) => (
           <View style={styles.data} key={index}>
-            <Text style={styles.datatext}>{item.date}</Text>
-            <Text style={styles.datatext}>{item.name}</Text>
-            <Text style={styles.datatext}>{item.laundryCode}</Text>
-            <Text style={styles.datatext}>{item.clothes}</Text>
-            <Text style={styles.datatext}>{item.status}</Text>
-            <Pressable
-              style={[styles.updateButton, { backgroundColor: item.status === 'Delivered' ? '#ccc' : 'lightgreen' }]}
-              onPress={() => handleUpdateStatus(item.id, item.status)}
-              disabled={item.status === 'Delivered'}
-            >
-              <Text style={styles.updateButtonText}>
-                {item.status === 'Ready for Pickup' ? 'Mark as Ready' : 'Delivered'}
+            <View style={styles.dataRow}>
+              <Text style={styles.datatext}>{item.date}</Text>
+              <Text style={styles.datatext}>{item.name}</Text>
+              <Text style={styles.datatext}>{item.laundryCode}</Text>
+              <Text style={styles.datatext}>{item.clothes}</Text>
+            </View>
+            <View style={styles.dataRow}>
+              <Text style={styles.datatext}>
+                <Text style={styles.boldText}>Status:</Text> {item.status}
               </Text>
-            </Pressable>
+              <Pressable
+                style={[
+                  styles.updateButton,
+                  item.status === 'Delivered'
+                    ? styles.greyButton
+                    : item.status === 'Ready for Pickup'
+                    ? styles.greenButton
+                    : styles.orangeButton
+                ]}
+                onPress={() => handleUpdateStatus(item.id, item.status)}
+                disabled={item.status === 'Delivered'}
+              >
+                <Text style={styles.updateButtonText}>
+                  {item.status === 'Laundry Picked' ? 'Ready to Take' : item.status === 'Ready for Pickup' ? 'Laundry Taken' : 'Already Delivered'}
+                </Text>
+              </Pressable>
+            </View>
           </View>
         ))}
       </View>
@@ -150,21 +158,24 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    paddingTop: 80,
+    paddingTop: 0,
     margin: 10,
   },
   searchContainer: {
-    marginBottom: 20,
+    margin: 10,
   },
   input: {
     height: 40,
     borderWidth: 1,
     padding: 10,
     borderRadius: 20,
-    marginBottom: 10,
+    marginBottom:7,
   },
   searchButton: {
     backgroundColor: "lightblue",
+    width: 200,
+    marginTop: 3,
+    borderWidth : 1,
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 20,
@@ -174,18 +185,22 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 17,
     fontWeight: "bold",
+    textAlign:"center"
+
   },
   dataBox: {
-    borderWidth: 1,
+    borderWidth: 2,
     borderRadius: 10,
+    padding: 2,
   },
   dataHeading: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    height: 40,
-    paddingHorizontal: 20,
+    height: 50,
+    paddingHorizontal: 3,
     backgroundColor: "lightblue",
+    borderWidth:1,
     borderTopRightRadius: 10,
     borderTopLeftRadius: 10,
   },
@@ -197,13 +212,17 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   data: {
+    paddingTop:5,
+    marginBottom: 0,
+    borderBottomWidth: 1.5,
+    borderColor: "#ccc",
+    paddingBottom: 0,
+  },
+  dataRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    height: 40,
-    paddingHorizontal: 20,
-    borderBottomWidth: 1,
-    borderColor: "#ccc",
+    marginBottom: 0,
   },
   datatext: {
     flex: 1,
@@ -211,11 +230,23 @@ const styles = StyleSheet.create({
     color: "black",
     textAlign: "center",
   },
+  boldText: {
+    fontWeight: "bold",
+  },
   updateButton: {
-    paddingVertical: 5,
+    paddingVertical: 3,
     paddingHorizontal: 10,
     borderRadius: 10,
     justifyContent: 'center',
+  },
+  orangeButton: {
+    backgroundColor: "orange",
+  },
+  greenButton: {
+    backgroundColor: "lightgreen",
+  },
+  greyButton: {
+    backgroundColor: "#ccc",
   },
   updateButtonText: {
     color: "black",
