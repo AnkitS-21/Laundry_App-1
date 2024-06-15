@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, ScrollView, Pressable, TextInput, StyleSheet } from "react-native";
-import { getFirestore, collection, getDocs, updateDoc, query, where, doc } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, updateDoc, doc } from 'firebase/firestore';
 import { app } from "../firebase";
 
 const UpdateStatus = () => {
   const [laundryData, setLaundryData] = useState([]);
   const [searchDate, setSearchDate] = useState('');
+  const [searchCode, setSearchCode] = useState('');
+  const [searchStatus, setSearchStatus] = useState('');
 
   useEffect(() => {
     const fetchLaundryData = async () => {
@@ -27,32 +29,60 @@ const UpdateStatus = () => {
   }, []);
 
   const handleSearch = () => {
-    if (!searchDate) {
-      console.error('Search date is empty');
-      return;
+    let filteredData = [...laundryData];
+
+    if (searchDate) {
+      const formattedSearchDate = searchDate.split('/').reverse().join('-');
+      filteredData = filteredData.filter(item => {
+        if (!item.date) {
+          return false;
+        }
+        const itemDate = item.date.split('/').reverse().join('-');
+        return itemDate === formattedSearchDate;
+      });
     }
 
-    const formattedSearchDate = searchDate.split('/').reverse().join('-'); 
-    const filteredData = laundryData.filter(item => {
-      if (!item.date) {
-        console.error('Item date is empty');
-        return false;
-      }
-      const itemDate = item.date.split('/').reverse().join('-');
-      return itemDate === formattedSearchDate;
-    });
+    if (searchCode) {
+      filteredData = filteredData.filter(item => item.laundryCode.includes(searchCode));
+    }
+
+    if (searchStatus) {
+      filteredData = filteredData.filter(item => item.status.toLowerCase().includes(searchStatus.toLowerCase()));
+    }
+
     setLaundryData(filteredData);
   };
 
-  const handleUpdateStatus = async (id) => {
+  const handleUpdateStatus = async (id, currentStatus) => {
     try {
       const firestore = getFirestore(app);
       const laundryDocRef = doc(firestore, 'laundryDetails', id);
+
+      let newStatus = '';
+      let buttonText = '';
+
+      if (currentStatus === 'Ready for Pickup') {
+        newStatus = 'Delivered';
+        buttonText = 'Delivered';
+      } else if (currentStatus === 'Delivered') {
+        return; // Do nothing if already delivered
+      } else {
+        newStatus = 'Ready for Pickup';
+        buttonText = 'Mark as Ready';
+      }
+
       await updateDoc(laundryDocRef, {
-        status: 'Ready for Pickup'
+        status: newStatus
       });
-      alert('Status updated successfully');
-      setLaundryData(prevData => prevData.map(item => item.id === id ? { ...item, status: 'Ready for Pickup' } : item));
+
+      alert(`Status updated to ${newStatus} successfully`);
+      
+      // Update local state
+      setLaundryData(prevData =>
+        prevData.map(item =>
+          item.id === id ? { ...item, status: newStatus } : item
+        )
+      );
     } catch (error) {
       console.error('Error updating status:', error);
       alert('Failed to update status. Please try again.');
@@ -67,6 +97,18 @@ const UpdateStatus = () => {
           placeholder="Enter Date (YYYY-MM-DD)"
           value={searchDate}
           onChangeText={setSearchDate}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Enter Laundry Code"
+          value={searchCode}
+          onChangeText={setSearchCode}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Enter Status"
+          value={searchStatus}
+          onChangeText={setSearchStatus}
         />
         <Pressable style={styles.searchButton} onPress={handleSearch}>
           <Text style={styles.searchButtonText}>Search</Text>
@@ -88,8 +130,14 @@ const UpdateStatus = () => {
             <Text style={styles.datatext}>{item.laundryCode}</Text>
             <Text style={styles.datatext}>{item.clothes}</Text>
             <Text style={styles.datatext}>{item.status}</Text>
-            <Pressable style={styles.updateButton} onPress={() => handleUpdateStatus(item.id)}>
-              <Text style={styles.updateButtonText}>Mark as Ready</Text>
+            <Pressable
+              style={[styles.updateButton, { backgroundColor: item.status === 'Delivered' ? '#ccc' : 'lightgreen' }]}
+              onPress={() => handleUpdateStatus(item.id, item.status)}
+              disabled={item.status === 'Delivered'}
+            >
+              <Text style={styles.updateButtonText}>
+                {item.status === 'Ready for Pickup' ? 'Mark as Ready' : 'Delivered'}
+              </Text>
             </Pressable>
           </View>
         ))}
@@ -106,24 +154,21 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   searchContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 10,
+    marginBottom: 20,
   },
   input: {
-    flex: 1,
     height: 40,
     borderWidth: 1,
     padding: 10,
     borderRadius: 20,
-    marginRight: 10,
+    marginBottom: 10,
   },
   searchButton: {
     backgroundColor: "lightblue",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 20,
+    alignSelf: 'center',
   },
   searchButtonText: {
     color: "black",
@@ -167,15 +212,16 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   updateButton: {
-    backgroundColor: "lightgreen",
     paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 10,
+    justifyContent: 'center',
   },
   updateButtonText: {
     color: "black",
     fontSize: 14,
     fontWeight: "bold",
+    textAlign: "center",
   },
 });
 
