@@ -55,14 +55,12 @@ The Laundry App was developed as part of the Institute Building Project at IIT G
 2. Register or log in using your credentials.
 3. Select your laundry service and manage your requests.
 
-## Contributing
-We welcome contributions! Please read our [Contributing Guidelines](CONTRIBUTING.md) for more details.
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Contact
-For any questions or feedback, please reach out to [your.email@example.com].
+For any questions or feedback, please reach out to [pranjal.gaur@iitgn.ac.in].
 
 ---
 
