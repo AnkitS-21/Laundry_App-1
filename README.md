@@ -54,7 +54,7 @@ The Laundry App was developed as part of the Institute Building Project at IIT G
     ```
 4. Start the development server:
     ```bash
-    npm expo start
+    npx expo start
     ```
 
 ## Usage
