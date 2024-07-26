@@ -67,7 +67,7 @@ The Laundry App was developed as part of the Institute Building Project at IIT G
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Contact
-For any questions or feedback, please reach out to [pranjal.gaur@iitgn.ac.in].
+For any questions or feedback, please reach out to pranjal.gaur@iitgn.ac.in .
 
 ---
 
