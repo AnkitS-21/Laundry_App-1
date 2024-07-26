@@ -19,7 +19,7 @@ The Laundry App was developed as part of the Institute Building Project at IIT G
 - **Database:** Firestore
 
 ## Project Link
-[Link to the project repository]
+[[Link to the project repository](https://github.com/AnkitS-21/Laundry_App-1)]
 
 ## Screenshots
 ### UI Screens
