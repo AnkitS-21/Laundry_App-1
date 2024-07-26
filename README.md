@@ -23,14 +23,19 @@ The Laundry App was developed as part of the Institute Building Project at IIT G
 
 ## Screenshots
 ### UI Screens
-![UI Screen 1](path/to/UI_screen1.png)
-![UI Screen 2](path/to/UI_screen2.png)
-![UI Screen 3](path/to/UI_screen3.png)
+![UI Screen 1](https://github.com/AnkitS-21/Laundry_App-1/blob/master/Images/UI%20Interface%201.png)
+![UI Screen 2](https://github.com/AnkitS-21/Laundry_App-1/blob/master/Images/UI%20Interface%202.png)
+![UI Screen 3](https://github.com/AnkitS-21/Laundry_App-1/blob/master/Images/UI%20Interface%203.png)
+![UI Screen 4](https://github.com/AnkitS-21/Laundry_App-1/blob/master/Images/UI%20Interface%204.png)
+![UI Screen 5](https://github.com/AnkitS-21/Laundry_App-1/blob/master/Images/UI%20Interface%205.png)
+![UI Screen 6](https://github.com/AnkitS-21/Laundry_App-1/blob/master/Images/UI%20Interface%206.png)
+![UI Screen 7](https://github.com/AnkitS-21/Laundry_App-1/blob/master/Images/UI%20Interface%207.png)
+
 
 ### Figma Designs
-![Figma Design 1](path/to/Figma_design1.png)
-![Figma Design 2](path/to/Figma_design2.png)
-![Figma Design 3](path/to/Figma_design3.png)
+![Figma Design ](https://www.figma.com/community/file/1398734638232887685)
+
+
 
 ## Installation
 1. Clone the repository:
