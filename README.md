@@ -33,7 +33,7 @@ The Laundry App was developed as part of the Institute Building Project at IIT G
 
 
 ### Figma Designs
-![Figma Design ](https://www.figma.com/community/file/1398734638232887685)
+![Figma Design ]()
 
 
 
